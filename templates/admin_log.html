@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Endringslogg</h2>
+  <form method="get" action="/admin/log">
+    <label>Antall visninger: <input type="number" name="limit" value="{{limit}}" min="1" max="500"></label>
+    <button type="submit">Oppdater</button>
+  </form>
+  <table>
+    <tr>
+      <th>Tidspunkt</th><th>Punkt ID</th><th>Trekt</th><th>Koblet</th><th>Testet</th><th>Kommentar</th>
+    </tr>
+    {% for log in logs %}
+    <tr>
+      <td>{{log.timestamp.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+      <td>{{log.entry_id}}</td>
+      <td>{{'Ja' if log.trekt else 'Nei'}}</td>
+      <td>{{'Ja' if log.koblet else 'Nei'}}</td>
+      <td>{{'Ja' if log.testet else 'Nei'}}</td>
+      <td>{{log.comment}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</section>
+{% endblock %}

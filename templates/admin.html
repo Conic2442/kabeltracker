@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Admin</h2>
+  <div class="grid2">
+    <div>
+      <h3>Oversikt</h3>
+      <ul>
+        <li>Total: {{counts.total}}</li>
+        <li>Trekt: {{counts.trekt}}</li>
+        <li>Koblet: {{counts.koblet}}</li>
+        <li>Testet: {{counts.testet}}</li>
+      </ul>
+      <p>
+        <a class="button" href="/admin/entries">Administrer punkter</a>
+  <a class="button" href="/export.csv">Eksporter CSV</a>
+        <a class="button" href="/admin/log">Endringslogg</a>
+      </p>
+    </div>
+    <div>
+      <h3>Brukere</h3>
+      <form method="post" action="/admin/user/create" class="row">
+        <input name="username" placeholder="brukernavn" required>
+        <input name="password" type="password" placeholder="passord" required>
+        <label><input type="checkbox" name="is_admin" value="true"> Admin</label>
+        <button type="submit">Opprett</button>
+      </form>
+      <table style="margin-top:18px; width:100%;">
+        <tr><th>Brukernavn</th><th>Admin</th><th>Endre passord</th><th>Slett</th></tr>
+        {% for u in users %}
+        <tr>
+          <td>{{u.username}}</td>
+          <td>{{'Ja' if u.is_admin else 'Nei'}}</td>
+          <td>
+            <form method="post" action="/admin/user/password" style="display:inline-block;">
+              <input type="hidden" name="username" value="{{u.username}}">
+              <input name="password" type="password" placeholder="Nytt passord" required style="width:120px;">
+              <button type="submit">Endre</button>
+            </form>
+          </td>
+          <td>
+            {% if u.username != 'admin' %}
+            <form method="post" action="/admin/user/delete" style="display:inline-block;" onsubmit="return confirm('Slette bruker {{u.username}}?')">
+              <input type="hidden" name="username" value="{{u.username}}">
+              <button type="submit">Slett</button>
+            </form>
+            {% else %}
+            <span style="color:#888;">(standard admin)</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  <h4>Velg synlige felter i punkter-listen</h4>
+  <form method="post" action="/admin/visible_keys" class="row wrap">
+    {% for k in keys %}
+      <label style="margin-right:12px;"><input type="checkbox" name="visible_keys" value="{{k}}" {% if k in visible_keys %}checked{% endif %}> {{k}}</label>
+    {% endfor %}
+    <button type="submit">Lagre valg</button>
+  </form>
+</section>
+{% endblock %}

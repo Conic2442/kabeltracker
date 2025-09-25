@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KabelTracker v3</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>
+    {% if user %}
+      <a href="/entries">KabelTracker</a>
+    {% else %}
+      <a href="/login">KabelTracker</a>
+    {% endif %}
+  </h1>
+  <nav>
+    {% if user %}
+      <a href="/entries">Punkter</a>
+    {% else %}
+      <a href="/login">Punkter</a>
+    {% endif %}
+    <a href="/admin">Admin</a>
+    {% if user %}
+      <span style="margin-right:16px; color:#38bdf8; font-weight:500;">{{user['username']}}</span>
+      <a href="/logout">Logg ut</a>
+    {% else %}
+      <a href="/login">Logg inn</a>
+    {% endif %}
+  </nav>
+</header>
+<main>
+  {% block content %}{% endblock %}
+</main>
+<footer>
+  <small>© STT - KabelTracker</small>
+</footer>
+</body>
+</html>

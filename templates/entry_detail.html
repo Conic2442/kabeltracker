@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Punkt #{{e.id}}</h2>
+  <div class="grid2">
+    <div>
+      <dl class="def">
+        {% for k in visible_keys %}
+          {% if data.get(k) %}
+            <dt>{{k}}</dt><dd>{{data[k]}}</dd>
+          {% endif %}
+        {% endfor %}
+      </dl>
+    </div>
+    <div>
+  <form method="post" action="/entries/{{e.id}}" class="toggles">
+        <label><input type="checkbox" name="trekt" value="true" {% if e.trekt %}checked{% endif %}> Trekt</label>
+        <label><input type="checkbox" name="koblet" value="true" {% if e.koblet %}checked{% endif %}> Koblet</label>
+        <label><input type="checkbox" name="testet" value="true" {% if e.testet %}checked{% endif %}> Testet</label>
+        <label for="comment">Kommentar:</label>
+        <textarea name="comment" id="comment" rows="3">{{e.comment}}</textarea>
+        <button type="submit">Lagre</button>
+      </form>
+    </div>
+  </div>
+  <span class="card-text">{{e.data_dict().get(k, "")}}</span>
+  {% if e.comment %}
+    <div class="card-comment">{{e.comment}}</div>
+  {% endif %}
+  <a href="/entries?q={{request.args.get('q')}}&status={{request.args.get('status')}}&f_key={{request.args.get('f_key')}}&f_val={{request.args.get('f_val')}}&scroll={{e.id}}" class="button">Tilbake</a>
+</section>
+{% endblock %}

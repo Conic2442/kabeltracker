@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Punkter</h2>
+  <form method="get" action="/entries" class="filters">
+    <input name="q" placeholder="Fritekstsøk i alle felt…" value="{{q}}">
+    <select name="status">
+      <option value="any" {{'selected' if status=='any' else ''}}>Status (alle)</option>
+      <option value="trekt" {{'selected' if status=='trekt' else ''}}>Trekt</option>
+      <option value="koblet" {{'selected' if status=='koblet' else ''}}>Koblet</option>
+      <option value="testet" {{'selected' if status=='testet' else ''}}>Testet</option>
+    </select>
+    <select name="f_key" onchange="this.form.submit()">
+      <option value="">Filter-felt…</option>
+      {% for k in distinct_keys %}
+      <option value="{{k}}" {{'selected' if f_key==k else ''}}>{{k}}</option>
+      {% endfor %}
+    </select>
+    <input name="f_val" list="vals" placeholder="Filter-verdi…" value="{{f_val}}">
+    <datalist id="vals">
+      {% for v in distinct_values %}<option value="{{v}}">{% endfor %}
+    </datalist>
+    <select name="sort_by">
+      <option value="">Sortér etter…</option>
+      {% for k in keys %}
+      <option value="{{k}}" {{'selected' if sort_by==k else ''}}>{{k}}</option>
+      {% endfor %}
+    </select>
+    <button>Søk</button>
+  </form>
+
+  <!-- Mobile-first card list -->
+  <div class="cards">
+    {% for e in entries %}
+    <section class="card row-card" id="card-{{e.id}}">
+      <div class="row-top">
+        <strong>#{{e.id}}</strong>
+        <span class="badges">
+          <span class="badge {{'ok' if e.trekt else ''}}">Trekt</span>
+          <span class="badge {{'ok' if e.koblet else ''}}">Koblet</span>
+          <span class="badge {{'ok' if e.testet else ''}}">Testet</span>
+        </span>
+          <a class="button sm" href="/entries/{{e.id}}">Åpne</a>
+      </div>
+      <div class="kv">
+        {% for k in visible_keys %}
+          <div>
+            <label>{{k}}</label>
+            <span class="card-text">{{e.data_dict().get(k, "")}}</span>
+          </div>
+        {% endfor %}
+      </div>
+      {% if e.comment %}
+        <div class="card-comment">{{e.comment}}</div>
+      {% endif %}
+      {% if e.updated_at %}
+        <div class="card-timestamp">Sist endret: {{e.updated_at.strftime('%Y-%m-%d %H:%M:%S')}}</div>
+      {% endif %}
+    </section>
+    {% endfor %}
+  </div>
+</section>
+<script>
+window.addEventListener("DOMContentLoaded", function() {
+  const params = new URLSearchParams(window.location.search);
+  const scrollId = params.get("scroll");
+  if (scrollId) {
+    const el = document.getElementById("card-" + scrollId);
+    if (el) el.scrollIntoView({behavior: "smooth", block: "center"});
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<body class="admin-bg">
+<section class="card">
+  <h2>Administrer punkter</h2>
+  <form method="post" action="/admin/entry/add" class="row wrap">
+    <label style="flex:1 1 480px">
+      Ny rad (JSON objekt):
+      <textarea name="data_json" rows="4" placeholder='{"Nr":1,"Rom":"0030","Type":"WiFi"}'></textarea>
+    </label>
+    <button type="submit">Legg til</button>
+  </form>
+
+  <form method="post" action="/admin/entries/import" enctype="multipart/form-data" style="margin-top:16px;">
+    <label>Last opp CSV:
+      <input type="file" name="file" accept=".csv">
+    </label>
+    <label style="margin-left:16px;">Modus:
+      <select name="mode">
+        <option value="add">Legg til</option>
+        <option value="replace">Erstatt alle</option>
+      </select>
+    </label>
+    <label style="margin-left:16px;">Skilletegn:
+      <select name="delimiter">
+        <option value=",">Komma (,)</option>
+        <option value=";">Semikolon (;)</option>
+      </select>
+    </label>
+    <button type="submit">Importer CSV</button>
+  </form>
+
+  <div class="cards">
+    {% for e in entries %}
+    {% set d = e.data_dict() %}
+    <article class="card row-card">
+      <header class="row-top">
+        <strong>#{{e.id}}</strong>
+        <span class="badges">
+          <span class="badge {{'ok' if e.trekt else ''}}">Trekt</span>
+          <span class="badge {{'ok' if e.koblet else ''}}">Koblet</span>
+          <span class="badge {{'ok' if e.testet else ''}}">Testet</span>
+        </span>
+        <form method="post" action="/admin/entry/delete" onsubmit="return confirm('Slette #{{e.id}}?')">
+          <input type="hidden" name="entry_id" value="{{e.id}}"><button class="button sm" type="submit">Slett</button>
+        </form>
+      </header>
+      <div class="kv">
+        {% for k in keys %}
+          {% if d.get(k) %}<div><label>{{k}}</label><div>{{d.get(k)}}</div></div>{% endif %}
+        {% endfor %}
+      </div>
+      {% if e.updated_at %}
+        <div class="card-timestamp">Sist endret: {{e.updated_at.strftime('%Y-%m-%d %H:%M:%S')}}</div>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+</section>
+</body>
+{% endblock %}
