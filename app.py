@@ -1,3 +1,10 @@
+# This is an app for tracking cables and network points.
+# It allows importing/exporting CSV data with arbitrary fields,
+# marking cables as pulled/connected/tested, adding comments, and user management.
+
+# Version 0.9 - Date: 2024-06-10
+
+# Simen Tystad Tunold
 
 from __future__ import annotations
 import csv, io, json, datetime as dt, os
@@ -290,6 +297,26 @@ def create_app():
         except Exception:
             visible_keys = keys
         return render_template("admin_entries.html", entries=items, keys=visible_keys)
+
+    @app.post("/admin/entries/delete_all")
+    @admin_required
+    def delete_all_entries():
+        db: Session = g.db
+        db.query(Entry).delete()
+        db.commit()
+        return redirect(url_for("admin_entries"))
+
+    @app.post("/admin/entry/delete")
+    @admin_required
+    def delete_entry():
+        db: Session = g.db
+        entry_id = request.form.get("entry_id")
+        e = db.query(Entry).get(entry_id)
+        if not e:
+            return Response("Not found", status=404)
+        db.delete(e)
+        db.commit()
+        return redirect(url_for("admin_entries"))
 
     @app.post("/admin/entries/import")
     @admin_required

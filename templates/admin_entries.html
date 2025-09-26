@@ -4,6 +4,7 @@
 <section class="card">
   <h2>Administrer punkter</h2>
   <form method="post" action="/admin/entry/add" class="row wrap">
+    <button type="submit" formaction="/admin/entries/delete_all" style="background:#c00;color:#fff;margin-bottom:16px;float:right;" onclick="return confirm('Er du sikker på at du vil slette ALLE punkter?');">Fjern alle data</button>
     <label style="flex:1 1 480px">
       Ny rad (JSON objekt):
       <textarea name="data_json" rows="4" placeholder='{"Nr":1,"Rom":"0030","Type":"WiFi"}'></textarea>
